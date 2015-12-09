@@ -140,16 +140,26 @@ uint16_t get_dirent(struct direntry *dirent, char *buffer)
     return followclust;
 }
 
+int chk&fix(struct direntry* dirent, unint8_t *image_buf, struct bpb33* bpb, char* filename, File **clus_list)
+{
+	int clus_size = count_size_in_clusters(dirent, image_buf, bpb, cluster_list);
+} 
+
 void traverse_root(unint8_t *image_buf, struct bpb33* bpb) {
 	uint16_t cluster = 0; //indicates root directory
-	
+	File* list = NULL; 
+	int inconst = 0; //inconsistency checker
 	struct direntry *dirent = (struct direntry*)cluster_to_addr(cluster, image_buf, bpb);
 	char buffer[MAXFILENAME]; 
 	
 	int i = 0;
 	for ( ; i < bpb->bpbRootDirEnts; i++) { //go through every entry in root dir
 		uint16_t followclust = get_dirent(dirent, buffer);
-		
+		if (dirent->deAttributes == ATTR_NORMAL) {//if it's a normal file
+			if (chk&fix(dirent, image_buf, bpb, buffer, &list)){
+				inconst = 1;
+			}
+		} 
 	}
 }
 
